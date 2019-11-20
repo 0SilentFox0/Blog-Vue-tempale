@@ -1,53 +1,61 @@
 <template>
-  <div class="container">
-    <div class="col-md-6 mx-auto text-center">
-      <div class="header-title"></div>
-    </div>
-    <div class="row">
-      <div class="col-md-4 mx-auto">
-        <div class="myform form ">
-          <form action="" method="post" name="login" @submit.prevent="login">
-            <div class="form-group">
-              <input
-                type="text"
-                name="name"
-                required
-                v-model="username"
-                class="form-control my-input"
-                id="name"
-                placeholder="Name"
-              />
-            </div>
-            <div class="form-group">
-              <input
-                type="email"
-                required
-                v-model="email"
-                name="email"
-                class="form-control my-input"
-                id="email"
-                placeholder="Email"
-              />
-            </div>
-            <div class="form-group">
-              <input
-                type="password"
-                required
-                v-model="password"
-                name="pswd"
-                id="pswd"
-                class="form-control my-input"
-                placeholder="********"
-                pattern="\w{8}"
-                title="8 character password"
-              />
-            </div>
-            <div class="text-center ">
-              <button type="submit" class=" btn btn-block send-button tx-tfm">
-                Create Your Account
-              </button>
-            </div>
-          </form>
+  <div id="signUp">
+    <div class="alert alert-danger" v-if="error">{{ error }}</div>
+    <div class="container">
+      <div class="col-md-6 mx-auto text-center">
+        <div class="header-title"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mx-auto">
+          <div class="myform form ">
+            <form name="login" class="form" @submit.prevent="signUp">
+              <div class="form-group">
+                <input
+                  required
+                  v-model="username"
+                  type="text"
+                  name="username"
+                  class="form-control my-input"
+                  placeholder="Name"
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  type="email"
+                  required
+                  v-model="email"
+                  name="email"
+                  class="form-control my-input"
+                  placeholder="Email"
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  type="password"
+                  required
+                  v-model="password"
+                  name="pswd"
+                  class="form-control my-input"
+                  placeholder="Password"
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  type="password"
+                  required
+                  v-model="password2"
+                  name="pswd2"
+                  class="form-control my-input"
+                  placeholder="Confirm password"
+                />
+              </div>
+              <div class="text-center ">
+                <button type="submit" class=" btn btn-block send-button tx-tfm">
+                  Create Your Account
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -56,21 +64,33 @@
 
 <script>
 export default {
-  name: "SignUp",
-  // data() {
-  //   return {
-  //     access: null,
-  //     refresh: null
-  //   }
-  // },
-  // method: {
-  //   signup() {
-  //     this.$http.post("account/token/",{
-  //       access: this.access,
-  //       refresh: this.refresh
-  //     })
-  //   }
-  // }
+  name: "signUp",
+  data() {
+    return {
+      username: null,
+      email: null,
+      password: null,
+      password2: null,
+      error: false
+    };
+  },
+  methods: {
+    signUp() {
+      this.$http
+        .post("account/register/", {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+          password2: this.password2
+        })
+        .then(() => this.$router.replace(this.$route.query.redirect || "/"))
+      .catch(err => this.failSign(err.response.data));
+    },
+    failSign(err) {
+      let firstKey = Object.keys(err)[0];
+      this.error = err[firstKey][0];
+    }
+  }
 };
 </script>
 

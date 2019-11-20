@@ -1,66 +1,31 @@
 <template>
-  <div class="home">
-    <section>
-      <div class="container wrapper">
-        <div class="row">
-          <div class="col-12">
-            <div class="header">
-              <p class="home">Home</p>
-              <div class="header__icons">
-                <router-link to="/signUp">
-                  <i class="fas fa-sign-in-alt"></i>
-                </router-link>
-                <router-link to="/login">
-                  <i class="fas fa-key"></i>
-                </router-link>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <div class="card mb-3">
-              <div class="post d-flex">
-                <div class="photo">
-                  <img src="../assets/photo.jpg" class="card-img" alt="photo" />
-                </div>
-                <div class="card-body">
-                  <div class="card-body__user-info">
-                    <h5 class="card-name">User name</h5>
-                    <p class="card-nick">@Nick_name</p>
-                    <p class="card-text">
-                      <small class="text-muted">Last updated 3 mins ago</small>
-                    </p>
-                  </div>
-                  <p class="card-body__text">
-                    This is a wider card with supporting text below as a natural
-                    lead-in to additional content. This content is a little bit
-                    longer. This is a wider card with supporting text below as a
-                    natural lead-in to additional content. This content is a
-                    little bit longer. This is a wider card with supporting text
-                    below as a natural lead-in to additional content. This
-                    content is a little bit longer. This is a wider card with
-                    supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer. This is a
-                    wider card with supporting text below as a natural lead-in
-                    to additional content. This content is a little bit longer.
-                  </p>
-                  <div class="card-body__actions">
-                    <i class="far fa-comment"></i>
-                    <i class="far fa-heart"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
+  <header>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h1 class="header__title text-info">One Story</h1>
+          <div class="header__icons">
+            <router-link to="/signUp">
+              <i class="fas fa-user-plus"></i>
+            </router-link>
+            <router-link to="/login">
+              <i class="fas fa-key"></i>
+            </router-link>
           </div>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+    <add-post />
+    <post />
+  </header>
 </template>
 <script>
+import Post from "@/components/Post";
+import AddPost from "@/components/AddPost";
+
 export default {
   name: "home",
+  components: { AddPost, Post },
   updated() {
     if (!localStorage.token && this.$route.path !== "/") {
       this.$router.push("/?redirect=" + this.$route.path);
@@ -76,13 +41,13 @@ body {
   padding: 0;
 }
 
-.wrapper {
-  background: rgb(32, 161, 241);
-  border: 1px solid gainsboro;
+header {
+  background: white;
+  padding: 20px 0;
 }
 
-.header {
-  position: relative;
+.header__title {
+  font-size: 30px;
 }
 
 .header__icons {
@@ -99,30 +64,9 @@ body {
   margin-right: 10px;
 }
 
-.home {
-  font-size: 20px;
-  text-align: center;
-  border-radius: 3px;
-  padding-top: 10px;
-}
-
 .photo img {
   width: 60px;
   border-radius: 50%;
   margin: 10px 10px;
-}
-
-.card-body__user-info {
-  display: flex;
-}
-.card-name,
-.card-nick,
-.card-text {
-  margin-left: 10px;
-}
-
-.card-body__actions {
-  display: flex;
-  justify-content: space-around;
 }
 </style>

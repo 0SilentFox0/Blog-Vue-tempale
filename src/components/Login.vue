@@ -57,11 +57,6 @@ export default {
       error: false
     };
   },
-  updated() {
-    if (localStorage.token) {
-      this.$router.replace(this.$route.query.redirect || "/");
-    }
-  },
   methods: {
     login() {
       this.$http
@@ -82,10 +77,15 @@ export default {
       this.$router.replace(this.$route.query.redirect || "/");
     },
     loginFailed() {
-      this.error = "Login failed!";
+      this.error = "Login Failed";
       delete localStorage.token;
     }
-  }
+  },
+  updated() {
+    if (localStorage.token) {
+      this.$router.replace(this.$route.query.redirect || "/");
+    }
+  },
 };
 </script>
 
