@@ -13,7 +13,9 @@
             <router-link to="/login" v-if="!isAuthorized">
               <i class="fas fa-key text-info"></i>
             </router-link>
-            <i class="fas fa-sign-in-alt" v-else @click="logout"></i>
+            <a href="#" v-if="isAuthorized">
+              <i class="fas fa-sign-in-alt text-info" @click="logout"></i>
+            </a>
           </div>
         </div>
       </div>
@@ -34,7 +36,7 @@ export default {
       delete localStorage.token;
       delete localStorage.refresh;
       delete this.$http.defaults.headers.common["Authorization"];
-      this.isAuthorized = false;
+      location.replace(location.origin);
     }
   }
 };

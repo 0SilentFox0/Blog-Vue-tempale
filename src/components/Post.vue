@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row">
         <div class="col-12 col-md-10 col-lg-6 mx-auto">
-          <form class="add-post-form">
+          <form v-if="isAuthorized" class="add-post-form mb-3">
             <input
               type="text"
               name="title"
@@ -32,20 +32,26 @@
         <div class="col-12 col-md-10 col-lg-6 mx-auto">
           <div
             class="card post mb-3"
-            v-for="(result, index) in results"
+            v-for="(post, index) in results"
             :key="index"
           >
             <div class="card-body">
               <h6 class="card-title d-flex justify-content-between text-info">
-                {{ result.author_username }}
+                {{ post.author_username }}
                 <span class="text-muted post__timestamp">{{
-                  result.created
+                  post.created
                 }}</span>
               </h6>
-              <h5 class="card-title mb-1">{{ result.title }}</h5>
+              <h5 class="card-title mb-1">{{ post.title }}</h5>
               <p class="card-text">
-                {{ result.content }}
+                {{ post.content }}
               </p>
+              <a href="#" @click.prevent="like">
+                <i class="fas fa-heart"></i>
+                <span class="badge">
+                  {{ post.total_likes }}
+                </span>
+              </a>
             </div>
           </div>
         </div>
@@ -59,12 +65,15 @@ export default {
   name: "Post",
   data() {
     return {
-      results: []
+      results: [],
+      isAuthorized: localStorage.token !== undefined
     };
   },
   created() {
     this.$http.get("posts/").then(response => {
       this.results = response.data.results.reverse();
+    }).catch(() => {
+      console.log("FROM POST ERROR");
     });
   },
   methods: {
@@ -79,6 +88,9 @@ export default {
           })
           .catch(err => console.dir(err));
       }
+    },
+    like(post) {
+      console.log(post);
     }
     //  todo number of likes (post.total_likes)
     //  todo is_fan
@@ -87,8 +99,8 @@ export default {
 </script>
 
 <style scoped>
-.add-post-form {
-  margin: 50px 0 10px;
+#posts {
+  padding: 50px 0 10px;
 }
 
 .form-control,
