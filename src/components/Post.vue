@@ -46,7 +46,11 @@
               <p class="card-text">
                 {{ post.content }}
               </p>
-              <a href="#" @click.prevent="like(post)">
+              <a
+                href="#"
+                @click.prevent="like(post)"
+                :class="{ 'disabled': !isAuthorized }"
+              >
                 <i class="fas fa-heart"></i>
                 <span class="badge">
                   {{ post.total_likes }}
@@ -95,7 +99,10 @@ export default {
       }
     },
     like(post) {
-      let url = (post.is_fan) ? `posts/${post.id}/unlike/` : `posts/${post.id}/like/`;
+      if (!this.isAuthorized) return;
+      let url = post.is_fan
+        ? `posts/${post.id}/unlike/`
+        : `posts/${post.id}/like/`;
       const config = this.headerConfig();
 
       this.$http.post(url, {}, config).then(response => {
@@ -125,5 +132,9 @@ export default {
 
 h5 {
   margin: 0;
+}
+
+a.disabled {
+  pointer-events: none;
 }
 </style>
