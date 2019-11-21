@@ -25,10 +25,10 @@
               class="form-control"
               placeholder="Password"
             />
+            <div class="alert alert-danger" v-if="error">{{ error }}</div>
             <button class="btn btn-dark btn-block">Log in</button>
           </form>
         </div>
-        <div class="alert alert-danger" v-if="error">{{ error }}</div>
       </div>
     </div>
   </section>
@@ -67,7 +67,7 @@ export default {
       this.$router.replace(this.$route.query.redirect || "/");
     },
     loginFailed() {
-      this.error = "Login Failed";
+      this.error = "Wrong login or password";
       delete localStorage.token;
       delete this.$http.defaults.headers.common["Authorization"];
     }

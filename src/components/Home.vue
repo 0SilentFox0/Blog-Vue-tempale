@@ -1,24 +1,14 @@
 <template>
   <div id="home">
-    <add-post @addPost="newPost" />
     <post />
   </div>
 </template>
 <script>
 import Post from "@/components/Post";
-import AddPost from "@/components/AddPost";
 
 export default {
   name: "home",
-  components: {
-    AddPost,
-    Post
-  },
-  methods: {
-    newPost(response) {
-      this.console.dir(response);
-    }
-  }
+  components: {Post}
 };
 </script>
 

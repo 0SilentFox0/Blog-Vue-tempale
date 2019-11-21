@@ -1,30 +1,57 @@
 <template>
-  <div class="row">
-    <div class="col-12">
-      <div class="card mb-3" v-for="(result, index) in results" :key="index">
-        <div class="post d-flex">
-          <div class="photo">
-            <img src="../assets/photo.jpg" class="card-img" alt="photo" />
-          </div>
-          <div class="card-body">
-            <div class="card-body__user-info">
-              <h5 class="card-name">{{ result.author_username }}</h5>
+  <section id="posts">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-md-10 col-lg-6 mx-auto">
+          <form class="add-post-form">
+            <input
+              type="text"
+              name="title"
+              class="form-control"
+              placeholder="Enter title of your post"
+            />
+            <textarea
+              class="form-control"
+              name="content"
+              rows="4"
+              placeholder="Enter text"
+              maxlength="1024"
+            >
+            </textarea>
+            <button
+              type="button"
+              class="btn btn-block btn-dark"
+              @click="addPost"
+            >
+              Add Post
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-10 col-lg-6 mx-auto">
+          <div
+            class="card post mb-3"
+            v-for="(result, index) in results"
+            :key="index"
+          >
+            <div class="card-body">
+              <h6 class="card-title d-flex justify-content-between text-info">
+                {{ result.author_username }}
+                <span class="text-muted post__timestamp">{{
+                  result.created
+                }}</span>
+              </h6>
+              <h5 class="card-title mb-1">{{ result.title }}</h5>
               <p class="card-text">
-                <small class="text-muted">{{ result.created }}</small>
+                {{ result.content }}
               </p>
             </div>
-            <div class="card-body__text">
-              <h4 class="card-body__title">
-                {{ result.title }}
-              </h4>
-              {{ result.content }}
-            </div>
-            <div @click="changeLike"></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -38,42 +65,43 @@ export default {
   },
   created() {
     this.$http.get("posts/").then(response => {
-      this.results = response.data.results;
+      this.results = response.data.results.reverse();
     });
   },
   methods: {
-    changeLike() {
-      this.isLiked = !this.isLiked;
+    addPost(e) {
+      if (localStorage.token) {
+        let post_data = new FormData(e.target.form);
+        this.$http
+          .post("posts/", post_data)
+          .then(response => {
+            e.target.form.reset();
+            this.results.unshift(response.data);
+          })
+          .catch(err => console.dir(err));
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-.card-body__user-info {
-  display: flex;
-  justify-content: space-between;
+.add-post-form {
+  margin: 50px 0 10px;
 }
 
-.card-body__text {
-  text-align: left;
+.form-control,
+.form-control:focus,
+.form-control:focus-within {
+  box-shadow: none !important;
+  outline: none;
 }
 
-.card-body__title {
-  text-align: center;
+.post__timestamp {
+  font-size: 12px;
 }
 
-.fa-heart {
-  display: flex;
-  align-content: center;
-  justify-content: flex-end;
-}
-
-.notLiked {
-  color: black;
-}
-
-.liked {
-  color: red;
+h5 {
+  margin: 0;
 }
 </style>
