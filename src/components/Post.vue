@@ -46,7 +46,7 @@
               <p class="card-text">
                 {{ post.content }}
               </p>
-              <a href="#" @click.prevent="like">
+              <a href="#" @click.prevent="like(post)">
                 <i class="fas fa-heart"></i>
                 <span class="badge">
                   {{ post.total_likes }}
@@ -70,30 +70,39 @@ export default {
     };
   },
   created() {
-    this.$http.get("posts/").then(response => {
+    const config = this.headerConfig;
+    this.$http.get("posts/", config).then(response => {
       this.results = response.data.results.reverse();
-    }).catch(() => {
-      console.log("FROM POST ERROR");
     });
   },
   methods: {
+    headerConfig() {
+      if (!localStorage.token) return;
+      return {
+        headers: {
+          Authorization: `Bearer ${localStorage.token}`
+        }
+      };
+    },
     addPost(e) {
       if (localStorage.token) {
+        const config = this.headerConfig();
         let post_data = new FormData(e.target.form);
-        this.$http
-          .post("posts/", post_data)
-          .then(response => {
-            e.target.form.reset();
-            this.results.unshift(response.data);
-          })
-          .catch(err => console.dir(err));
+        this.$http.post("posts/", post_data, config).then(response => {
+          e.target.form.reset();
+          this.results.unshift(response.data);
+        });
       }
     },
     like(post) {
-      console.log(post);
+      let url = (post.is_fan) ? `posts/${post.id}/unlike/` : `posts/${post.id}/like/`;
+      const config = this.headerConfig();
+
+      this.$http.post(url, {}, config).then(response => {
+        post.total_likes = response.data.total_likes;
+        post.is_fan = response.data.is_fan;
+      });
     }
-    //  todo number of likes (post.total_likes)
-    //  todo is_fan
   }
 };
 </script>

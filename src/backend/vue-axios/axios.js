@@ -38,10 +38,4 @@ http.interceptors.request.use(async request => {
   return request;
 });
 
-// if (!localStorage.token) return config;
-//
-// console.log("FROM CONFIG");
-// return config;
-// });
-
 export default http;
