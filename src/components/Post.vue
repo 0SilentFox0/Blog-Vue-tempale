@@ -36,16 +36,11 @@ export default {
       results: []
     };
   },
-  mounted() {
+  created() {
     this.$http.get("posts/").then(response => {
       this.results = response.data.results;
     });
   },
-  // updated() {
-  //   if (!localStorage.token && this.$route.path !== "/") {
-  //     this.$router.push("/?redirect=" + this.$route.path);
-  //   }
-  // },
   methods: {
     changeLike() {
       this.isLiked = !this.isLiked;

@@ -1,53 +1,40 @@
 <template>
-  <div id="login">
-    <h3 class="text-center text-white pt-5">Login form</h3>
+  <section id="login">
     <div class="container">
-      <div id="login-row" class="row justify-content-center align-items-center">
-        <div id="login-column" class="col-md-6">
-          <div id="login-box" class="col-md-12">
-            <form id="login-form" class="form" @submit.prevent="login">
-              <h3 class="text-center text-info">Login</h3>
-              <div class="form-group">
-                <label for="username" class="text-info">Username:</label><br />
-                <input
-                  required
-                  v-model="username"
-                  type="text"
-                  name="username"
-                  id="username"
-                  class="form-control"
-                />
-              </div>
-              <div class="form-group">
-                <label for="password" class="text-info">Password:</label><br />
-                <input
-                  required
-                  v-model="password"
-                  type="password"
-                  name="password"
-                  id="password"
-                  class="form-control"
-                />
-              </div>
-              <div class="form-group">
-                <input
-                  type="submit"
-                  name="submit"
-                  class="btn btn-info btn-md submit__button"
-                  value="Submit"
-                />
-              </div>
-            </form>
-          </div>
-          <div class="alert alert-danger" v-if="error">{{ error }}</div>
+      <div class="row">
+        <div class="col-12 text-center">
+          <h2>Log in</h2>
         </div>
       </div>
+      <div class="row">
+        <div class="col-12 col-md-6 col-lg-4 mx-auto">
+          <form class="login-form" @submit.prevent="login">
+            <input
+              required
+              v-model="username"
+              type="text"
+              name="username"
+              class="form-control"
+              placeholder="Username"
+            />
+            <input
+              required
+              v-model="password"
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="Password"
+            />
+            <button class="btn btn-dark btn-block">Log in</button>
+          </form>
+        </div>
+        <div class="alert alert-danger" v-if="error">{{ error }}</div>
+      </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
-
 export default {
   name: "LogIn",
   data() {
@@ -73,19 +60,18 @@ export default {
         return;
       }
       this.error = false;
-      localStorage.token = req.data.token;
+      localStorage.token = req.data.access;
+      localStorage.refresh = req.data.refresh;
+      this.$http.defaults.headers.common["Authorization"] =
+        "Bearer " + localStorage.token;
       this.$router.replace(this.$route.query.redirect || "/");
     },
     loginFailed() {
       this.error = "Login Failed";
       delete localStorage.token;
+      delete this.$http.defaults.headers.common["Authorization"];
     }
-  },
-  updated() {
-    if (localStorage.token) {
-      this.$router.replace(this.$route.query.redirect || "/");
-    }
-  },
+  }
 };
 </script>
 
@@ -96,23 +82,8 @@ body {
   background-color: #17a2b8;
   height: 100vh;
 }
-#login .container #login-row #login-column #login-box {
-  margin-top: 120px;
-  max-width: 600px;
-  height: 320px;
-  border: 1px solid #9c9c9c;
-  background-color: #eaeaea;
-}
-#login .container #login-row #login-column #login-box #login-form {
-  padding: 20px;
-}
-#login
-  .container
-  #login-row
-  #login-column
-  #login-box
-  #login-form
-  #register-link {
-  margin-top: -85px;
+.login-form label {
+  width: 100%;
+  margin: 0;
 }
 </style>
