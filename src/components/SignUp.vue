@@ -75,9 +75,7 @@ export default {
         })
         .then(() =>
           this.$router.replace(this.$route.query.redirect || "/login")
-        )
-        .catch(err => console.dir(err));
-      // this.failSign(err.response.data)
+        ).catch(error => this.failSign(error.response.data));
     },
     failSign(err) {
       let firstKey = Object.keys(err)[0];

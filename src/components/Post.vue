@@ -49,7 +49,7 @@
               <a
                 href="#"
                 @click.prevent="like(post)"
-                :class="{ 'disabled': !isAuthorized }"
+                :class="{ disabled: !isAuthorized }"
               >
                 <i class="fas fa-heart"></i>
                 <span class="badge">
@@ -70,14 +70,20 @@ export default {
   data() {
     return {
       results: [],
-      isAuthorized: localStorage.token !== undefined
+      previous: null,
+      next: null,
+      isAuthorized: localStorage.token !== undefined,
+      busy: false
     };
   },
   created() {
     const config = this.headerConfig;
     this.$http.get("posts/", config).then(response => {
+      this.previous = response.data.previous;
+      this.next = response.data.next;
       this.results = response.data.results.reverse();
     });
+    window.addEventListener("scroll", this.handlePagination);
   },
   methods: {
     headerConfig() {
@@ -109,6 +115,18 @@ export default {
         post.total_likes = response.data.total_likes;
         post.is_fan = response.data.is_fan;
       });
+    },
+    handlePagination() {
+      let limit = document.body.offsetHeight - window.innerHeight;
+      if (window.scrollY === limit && this.next) {
+        let config = this.headerConfig();
+        this.$http.get(this.next, config).then(response => {
+          this.previous = response.data.previous;
+          this.next = response.data.next;
+          this.results.push(response.data.results);
+          console.dir(response.data.results);
+        });
+      }
     }
   }
 };
