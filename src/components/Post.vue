@@ -59,7 +59,6 @@ export default {
   name: "Post",
   data() {
     return {
-      isLiked: false,
       results: []
     };
   },
@@ -81,6 +80,8 @@ export default {
           .catch(err => console.dir(err));
       }
     }
+    //  todo number of likes (post.total_likes)
+    //  todo is_fan
   }
 };
 </script>

@@ -7,12 +7,13 @@
             One Story
           </router-link>
           <div class="header__icons">
-            <router-link to="/signUp">
+            <router-link to="/signUp" v-if="!isAuthorized">
               <i class="fas fa-user-plus text-info"></i>
             </router-link>
-            <router-link to="/login">
+            <router-link to="/login" v-if="!isAuthorized">
               <i class="fas fa-key text-info"></i>
             </router-link>
+            <i class="fas fa-sign-in-alt" v-else @click="logout"></i>
           </div>
         </div>
       </div>
@@ -22,7 +23,20 @@
 
 <script>
 export default {
-  name: "Header"
+  name: "Header",
+  data() {
+    return {
+      isAuthorized:  localStorage.token !== undefined
+    }
+  },
+  methods: {
+    logout() {
+      delete localStorage.token;
+      delete localStorage.refresh;
+      delete this.$http.defaults.headers.common["Authorization"];
+      this.isAuthorized = false;
+    }
+  }
 };
 </script>
 

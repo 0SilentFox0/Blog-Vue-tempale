@@ -64,11 +64,12 @@ export default {
       localStorage.refresh = req.data.refresh;
       this.$http.defaults.headers.common["Authorization"] =
         "Bearer " + localStorage.token;
-      this.$router.replace(this.$route.query.redirect || "/");
+      location.replace(location.origin);
     },
     loginFailed() {
       this.error = "Wrong login or password";
       delete localStorage.token;
+      delete localStorage.refresh;
       delete this.$http.defaults.headers.common["Authorization"];
     }
   }
