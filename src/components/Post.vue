@@ -30,6 +30,9 @@
       </div>
       <div class="row">
         <div class="col-12 col-md-10 col-lg-6 mx-auto">
+          <h5 v-if="!posts.length" class="text-white">
+            There are no posts yet. You should log in to create one.
+          </h5>
           <div
             class="card post mb-3"
             v-for="(post, index) in posts"
