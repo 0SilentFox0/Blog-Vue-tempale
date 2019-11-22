@@ -14,9 +14,10 @@ const http = axios.create({
 });
 
 http.interceptors.request.use(async request => {
+  if (!localStorage.token) return request;
   await axios
-    .get(API_URL + "/users/", {
-      headers: { Authorization: "Bearer " + localStorage.token }
+    .post(API_URL + "/account/token/verify/", {
+      token: localStorage.token
     })
     .catch(async err => {
       if (err.response.status === 401 && localStorage.refresh) {
