@@ -58,6 +58,9 @@
               </a>
             </div>
           </div>
+          <div class="spinner text-center d-none">
+            <img :src="require('../assets/spinner.gif')"/>
+          </div>
         </div>
       </div>
     </div>
@@ -65,95 +68,101 @@
 </template>
 
 <script>
-export default {
-  name: "Post",
-  data() {
-    return {
-      posts: [],
-      previous: null,
-      next: null,
-      isAuthorized: localStorage.token !== undefined,
-    };
-  },
-  created() {
-    const config = this.headerConfig;
-    this.$http.get("posts/", config).then(response => {
-      this.previous = response.data.previous;
-      this.next = response.data.next;
-      this.posts = response.data.results;
-    });
-    window.addEventListener("scroll", this.handlePagination);
-  },
-  methods: {
-    headerConfig() {
-      if (!localStorage.token) return;
+  export default {
+    name: "Post",
+    data() {
       return {
-        headers: {
-          Authorization: `Bearer ${localStorage.token}`
-        }
+        posts: [],
+        previous: null,
+        next: null,
+        isAuthorized: localStorage.token !== undefined,
       };
     },
-    addPost(e) {
-      if (localStorage.token) {
-        const config = this.headerConfig();
-        let post_data = new FormData(e.target.form);
-        this.$http.post("posts/", post_data, config).then(response => {
-          e.target.form.reset();
-          this.posts.unshift(response.data);
-        });
-      }
-    },
-    like(post) {
-      if (!this.isAuthorized) return;
-      let url = post.is_fan
-        ? `posts/${post.id}/unlike/`
-        : `posts/${post.id}/like/`;
-      const config = this.headerConfig();
-
-      this.$http.post(url, {}, config).then(response => {
-        post.total_likes = response.data.total_likes;
-        post.is_fan = response.data.is_fan;
+    created() {
+      const config = this.headerConfig;
+      this.$http.get("posts/", config).then(response => {
+        this.previous = response.data.previous;
+        this.next = response.data.next;
+        this.posts = response.data.results;
       });
+      window.addEventListener("scroll", this.handlePagination);
     },
-    handlePagination() {
-      let limit = document.body.offsetHeight - window.innerHeight;
-      if (window.scrollY === limit && this.next) {
-        let config = this.headerConfig();
-        this.$http.get(this.next, config).then(response => {
-          this.previous = response.data.previous;
-          this.next = response.data.next;
-          response.data.results.forEach(post => {
-            this.posts.push(post);
-          })
-          // this.posts.concat(response.data.results);
+    methods: {
+      headerConfig() {
+        if (!localStorage.token) return;
+        return {
+          headers: {
+            Authorization: `Bearer ${localStorage.token}`
+          }
+        };
+      },
+      addPost(e) {
+        if (localStorage.token) {
+          const config = this.headerConfig();
+          let post_data = new FormData(e.target.form);
+          this.$http.post("posts/", post_data, config).then(response => {
+            e.target.form.reset();
+            this.posts.unshift(response.data);
+          });
+        }
+      },
+      like(post) {
+        if (!this.isAuthorized) return;
+        let url = post.is_fan
+          ? `posts/${post.id}/unlike/`
+          : `posts/${post.id}/like/`;
+        const config = this.headerConfig();
+
+        this.$http.post(url, {}, config).then(response => {
+          post.total_likes = response.data.total_likes;
+          post.is_fan = response.data.is_fan;
         });
+      },
+      handlePagination() {
+        let limit = document.body.offsetHeight - window.innerHeight;
+        if (window.scrollY === limit && this.next) {
+          let spinner = document.querySelector('.spinner');
+          spinner.classList.remove('d-none');
+          let config = this.headerConfig();
+          this.$http.get(this.next, config).then(response => {
+            spinner.classList.add('d-none');
+            this.previous = response.data.previous;
+            this.next = response.data.next;
+            response.data.results.forEach(post => {
+              this.posts.push(post);
+            })
+          });
+        }
       }
     }
-  }
-};
+  };
 </script>
 
 <style scoped>
-#posts {
-  padding: 50px 0 10px;
-}
+  .spinner img {
+    max-width: 50px;
+  }
 
-.form-control,
-.form-control:focus,
-.form-control:focus-within {
-  box-shadow: none !important;
-  outline: none;
-}
+  #posts {
+    padding: 50px 0 10px;
+  }
 
-.post__timestamp {
-  font-size: 12px;
-}
+  .form-control,
+  .form-control:focus,
+  .form-control:focus-within {
+    box-shadow: none !important;
+    outline: none;
+  }
 
-h5 {
-  margin: 0;
-}
+  .post__timestamp {
+    font-size: 12px;
+  }
 
-a.disabled {
-  pointer-events: none;
-}
+  h5 {
+    margin: 0;
+  }
+
+  a.disabled {
+    pointer-events: none;
+  }
 </style>

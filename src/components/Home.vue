@@ -13,11 +13,6 @@ export default {
 </script>
 
 <style>
-.photo img {
-  width: 60px;
-  border-radius: 50%;
-  margin: 10px 10px;
-}
 h2 {
   color: white;
   margin: 50px 0 20px;
