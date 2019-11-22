@@ -32,7 +32,7 @@
         <div class="col-12 col-md-10 col-lg-6 mx-auto">
           <div
             class="card post mb-3"
-            v-for="(post, index) in results"
+            v-for="(post, index) in posts"
             :key="index"
           >
             <div class="card-body">
@@ -69,11 +69,10 @@ export default {
   name: "Post",
   data() {
     return {
-      results: [],
+      posts: [],
       previous: null,
       next: null,
       isAuthorized: localStorage.token !== undefined,
-      busy: false
     };
   },
   created() {
@@ -81,7 +80,7 @@ export default {
     this.$http.get("posts/", config).then(response => {
       this.previous = response.data.previous;
       this.next = response.data.next;
-      this.results = response.data.results.reverse();
+      this.posts = response.data.results;
     });
     window.addEventListener("scroll", this.handlePagination);
   },
@@ -100,7 +99,7 @@ export default {
         let post_data = new FormData(e.target.form);
         this.$http.post("posts/", post_data, config).then(response => {
           e.target.form.reset();
-          this.results.unshift(response.data);
+          this.posts.unshift(response.data);
         });
       }
     },
@@ -123,8 +122,10 @@ export default {
         this.$http.get(this.next, config).then(response => {
           this.previous = response.data.previous;
           this.next = response.data.next;
-          this.results.push(response.data.results);
-          console.dir(response.data.results);
+          response.data.results.forEach(post => {
+            this.posts.push(post);
+          })
+          // this.posts.concat(response.data.results);
         });
       }
     }
