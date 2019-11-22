@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.API_URL || "http://127.0.0.1:8000/api/v1";
+const API_URL = process.env.API_URL || "http://yochered.pythonanywhere.com/";
 const isAuthorized = {};
 if (localStorage.token !== undefined)
   isAuthorized.Authorization = "Bearer " + localStorage.token;
